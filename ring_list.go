@@ -55,10 +55,10 @@ func (l *list) Push(val interface{}) {
 
 func (l *list) IterateForward(cb func(interface{}) bool) {
 	for i := l.len - 1; i >= 0; i-- {
-		idx := l.head + i
-		if idx >= l.cap {
+		idx := l.head - i
+		if idx < 0 {
 			// wrap around
-			idx -= l.cap
+			idx += l.cap
 		}
 		if !cb(l.data[idx]) {
 			return
