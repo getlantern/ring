@@ -1,7 +1,8 @@
-// Package ringbuffer provides bounded circular buffers.
-package ringbuffer
+// Package ring provides circular data structures.
+package ring
 
-type RingBuffer interface {
+// List is a bounded circular list.
+type List interface {
 	// Push() pushes a value to the head of the buffer
 	Push(interface{})
 
@@ -19,21 +20,21 @@ type RingBuffer interface {
 	Len() int
 }
 
-type ringBuffer struct {
+type list struct {
 	data []interface{}
 	cap  int
 	len  int
 	head int
 }
 
-// New constructs a new RingBuffer bounded to cap. If cap <= 0, the RingBuffer
-// will have a capacity of 1.
-func New(cap int) RingBuffer {
+// New constructs a new List bounded to cap. If cap <= 0, the List will have a
+// capacity of 1.
+func New(cap int) List {
 	if cap <= 0 {
 		// need at least 1
 		cap = 1
 	}
-	return &ringBuffer{
+	return &list{
 		data: make([]interface{}, cap),
 		cap:  cap,
 		len:  0,
@@ -41,51 +42,51 @@ func New(cap int) RingBuffer {
 	}
 }
 
-func (rb *ringBuffer) Push(val interface{}) {
-	rb.head++
-	if rb.head >= rb.cap {
-		rb.head -= rb.cap
+func (l *list) Push(val interface{}) {
+	l.head++
+	if l.head >= l.cap {
+		l.head -= l.cap
 	}
-	rb.data[rb.head] = val
-	if rb.len < rb.cap {
-		rb.len++
+	l.data[l.head] = val
+	if l.len < l.cap {
+		l.len++
 	}
 }
 
-func (rb *ringBuffer) IterateForward(cb func(interface{}) bool) {
-	for i := rb.len - 1; i >= 0; i-- {
-		idx := rb.head + i
-		if idx >= rb.cap {
+func (l *list) IterateForward(cb func(interface{}) bool) {
+	for i := l.len - 1; i >= 0; i-- {
+		idx := l.head + i
+		if idx >= l.cap {
 			// wrap around
-			idx -= rb.cap
+			idx -= l.cap
 		}
-		if !cb(rb.data[idx]) {
+		if !cb(l.data[idx]) {
 			return
 		}
 	}
 }
 
-func (rb *ringBuffer) IterateBackward(cb func(interface{}) bool) {
-	if rb.empty() {
+func (l *list) IterateBackward(cb func(interface{}) bool) {
+	if l.empty() {
 		return
 	}
 
-	for i := 0; i < rb.len; i++ {
-		idx := rb.head + i
-		if idx >= rb.cap {
+	for i := 0; i < l.len; i++ {
+		idx := l.head + i
+		if idx >= l.cap {
 			// wrap around
-			idx -= rb.cap
+			idx -= l.cap
 		}
-		if !cb(rb.data[idx]) {
+		if !cb(l.data[idx]) {
 			return
 		}
 	}
 }
 
-func (rb *ringBuffer) Len() int {
-	return rb.len
+func (l *list) Len() int {
+	return l.len
 }
 
-func (rb *ringBuffer) empty() bool {
-	return rb.len == 0
+func (l *list) empty() bool {
+	return l.len == 0
 }

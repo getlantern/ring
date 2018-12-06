@@ -1,4 +1,4 @@
-package ringbuffer
+package ring
 
 import (
 	"testing"
@@ -7,29 +7,29 @@ import (
 )
 
 func TestZeroCapacity(t *testing.T) {
-	rb := New(0)
-	rb.Push("a")
-	assert.Equal(t, 1, rb.Len())
+	l := New(0)
+	l.Push("a")
+	assert.Equal(t, 1, l.Len())
 }
 
-func TestRingBuffer(t *testing.T) {
-	rb := New(2)
+func TestRingList(t *testing.T) {
+	l := New(2)
 
 	checkContents := func(expectedLen int, expectedForward string, expectedBackward string) {
-		assert.Equal(t, expectedLen, rb.Len())
+		assert.Equal(t, expectedLen, l.Len())
 		if expectedLen == 0 {
 			return
 		}
 
 		// complete iteration
 		append, word := wordBuilder()
-		rb.IterateForward(func(letter interface{}) bool {
+		l.IterateForward(func(letter interface{}) bool {
 			append(letter)
 			return true
 		})
 		assert.Equal(t, expectedForward, word())
 		append, word = wordBuilder()
-		rb.IterateBackward(func(letter interface{}) bool {
+		l.IterateBackward(func(letter interface{}) bool {
 			append(letter)
 			return true
 		})
@@ -37,13 +37,13 @@ func TestRingBuffer(t *testing.T) {
 
 		// short iteration
 		append, word = wordBuilder()
-		rb.IterateForward(func(letter interface{}) bool {
+		l.IterateForward(func(letter interface{}) bool {
 			append(letter)
 			return false
 		})
 		assert.Equal(t, string(rune(expectedForward[0])), word())
 		append, word = wordBuilder()
-		rb.IterateBackward(func(letter interface{}) bool {
+		l.IterateBackward(func(letter interface{}) bool {
 			append(letter)
 			return false
 		})
@@ -54,20 +54,20 @@ func TestRingBuffer(t *testing.T) {
 	checkContents(0, "", "")
 
 	// Single element
-	rb.Push("a")
+	l.Push("a")
 	checkContents(1, "a", "a")
 
 	// Full buffer
-	rb.Push("b")
+	l.Push("b")
 	checkContents(2, "ab", "ba")
 
 	// Wrapped buffer
-	rb.Push("c")
+	l.Push("c")
 	checkContents(2, "bc", "cb")
 
 	// Wraped twice buffer
-	rb.Push("d")
-	rb.Push("e")
+	l.Push("d")
+	l.Push("e")
 	checkContents(2, "de", "ed")
 }
 
