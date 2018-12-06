@@ -7,13 +7,13 @@ import (
 )
 
 func TestZeroCapacity(t *testing.T) {
-	l := New(0)
+	l := NewList(0)
 	l.Push("a")
 	assert.Equal(t, 1, l.Len())
 }
 
 func TestRingList(t *testing.T) {
-	l := New(2)
+	l := NewList(2)
 
 	checkContents := func(expectedLen int, expectedForward string, expectedBackward string) {
 		assert.Equal(t, expectedLen, l.Len())

@@ -3,20 +3,18 @@ package ring
 
 // List is a bounded circular list.
 type List interface {
-	// Push() pushes a value to the head of the buffer
+	// Push pushes a value to the head of the buffer
 	Push(interface{})
 
-	// Pop() pops the tail value off the buffer
-
-	// IterateForward() iterates forward through the values starting at the tail.
+	// IterateForward iterates forward through the values starting at the tail.
 	// Iteration stops if the callback function returns false.
 	IterateForward(func(interface{}) bool)
 
-	// IterateBackward() iterates backwards through the values starting at the
-	// head. Iteration stops if the callback function returns false.
+	// IterateBackward iterates backwards through the values starting at the head.
+	// Iteration stops if the callback function returns false.
 	IterateBackward(func(interface{}) bool)
 
-	// Len() returns the number of items in the buffer
+	// Len returns the number of items in the buffer
 	Len() int
 }
 
@@ -27,9 +25,9 @@ type list struct {
 	head int
 }
 
-// New constructs a new List bounded to cap. If cap <= 0, the List will have a
-// capacity of 1.
-func New(cap int) List {
+// NewList constructs a new List bounded to cap. If cap <= 0, the List will have
+// a capacity of 1.
+func NewList(cap int) List {
 	if cap <= 0 {
 		// need at least 1
 		cap = 1
