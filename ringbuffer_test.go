@@ -64,6 +64,11 @@ func TestRingBuffer(t *testing.T) {
 	// Wrapped buffer
 	rb.Push("c")
 	checkContents(2, "bc", "cb")
+
+	// Wraped twice buffer
+	rb.Push("d")
+	rb.Push("e")
+	checkContents(2, "de", "ed")
 }
 
 func wordBuilder() (func(letter interface{}), func() string) {
