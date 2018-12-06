@@ -33,7 +33,6 @@ func NewList(cap int) List {
 		cap = 1
 	}
 	return &list{
-		data: make([]interface{}, cap),
 		cap:  cap,
 		len:  0,
 		head: -1,
@@ -42,12 +41,15 @@ func NewList(cap int) List {
 
 func (l *list) Push(val interface{}) {
 	l.head++
-	if l.head >= l.cap {
-		l.head -= l.cap
-	}
-	l.data[l.head] = val
 	if l.len < l.cap {
+		l.data = append(l.data, val)
 		l.len++
+	} else {
+		if l.head >= l.cap {
+			// wrap
+			l.head -= l.cap
+		}
+		l.data[l.head] = val
 	}
 }
 
